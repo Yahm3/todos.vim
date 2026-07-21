@@ -1,0 +1,29 @@
+*todos.txt* todos last change: Jul 21 2026
+LEVELS - TABLE OF CONTENTS                                 *todos* *todos-toc*
+==============================================================================
+todos
+Installation
+License
+
+LEVELS.VI                                                          *todos.vim*
+==============================================================================
+I use todos to manage my TODOs in vim effeciently
+
+
+INSTALLATION                                             *todos-installation*
+==============================================================================
+Use your favorite plugin manager.
+
+ - {vim-plug}{1}
+   1. Add `Plug 'Yahm3/todos.vim'` to .vimrc
+   2. Run `:PlugInstall`
+                                      {1} https://github.com/junegunn/vim-plug
+
+LICENSE                                                       *todos-license*
+==============================================================================
+
+GNU GPL v3
+
+==============================================================================
+vim:tw=78:sw=2:ts=2:ft=help:norl:nowrap:
+
