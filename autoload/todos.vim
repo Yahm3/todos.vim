@@ -16,8 +16,8 @@ endfunction
 
 function! todos#Todo() abort
   let l:todofile = getcwd() . "/todos.txt"
-  
-  silent! autocmd vimgrep /\v(TODO*|FIXME*)/j **/*
+
+  silent! noautocmd vimgrep /\v(TODO*|FIXME*)/j **/*
   let l:qflist = getqflist()
   if empty(l:qflist)
     echo "No TODOs or FIXMEs found"
@@ -32,29 +32,28 @@ function! todos#Todo() abort
     let l:priority = 0
     if l:match =~# '^FIXME'
       let l:priority = 1000 + len(l:match)
-    elseif
-    if l:match =~# '^TODO'
+    elseif l:match =~# '^TODO'
       let l:priority = 500 + len(l:match)
     endif
 
     call add(l:parse_list,{
-      \ 'priority': l:priority,
-      \ 'filename': bufname(l:item.bfnr),
-      \ 'lnum'    : l:item.lnum,
-      \ 'col'     : l:item.col,
-      \ 'text'    : l:item.ltext,
+	  \ 'priority': l:priority,
+	  \ 'filename': bufname(l:item.bufnr),
+	  \ 'lnum'    : l:item.lnum,
+	  \ 'col'     : l:item.col,
+	  \ 'text'    : l:item.l:text,
     })
   endfor
 
   ":NOTE: Sort the list descending based on priority score
-  call sort(l:parse_list, {a, b -> b.priority a.priority})
+  call sort(l:parse_list, {a, b -> b.priority - a.priority})
   let l:output = []
   for l:item in l:parse_list
-    let l:line = printf("%s | %d:%d | %s", l:filename, l:lnum, l:col, l:text) 
+    let l:line = printf("%s | %d:%d | %s", l:item.filename, l:item.lnum, l:item.col, l:item.text) 
     call add(l:output, l:line)
   endfor
 
-" :NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
+  " :NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
   call writefile(l:output, l:todofile)
   echo "todos.txt generated successfully!"
 endfunction
