@@ -17,7 +17,7 @@ endfunction
 function! todos#Todo() abort
   let l:todofile = getcwd() . "/todos.txt"
 
-  silent! noautocmd vimgrep /\v(TODO*|FIXME*)/j **/*
+  silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
   let l:qflist = getqflist()
   if empty(l:qflist)
     echo "No TODOs or FIXMEs found"
@@ -41,7 +41,7 @@ function! todos#Todo() abort
 	  \ 'filename': bufname(l:item.bufnr),
 	  \ 'lnum'    : l:item.lnum,
 	  \ 'col'     : l:item.col,
-	  \ 'text'    : l:item.l:text,
+	  \ 'text'    : l:text
     })
   endfor
 
