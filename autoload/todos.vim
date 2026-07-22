@@ -36,13 +36,13 @@ function! todos#Todo() abort
       let l:priority = 500 + len(l:match)
     endif
 
-    call add(l:parse_list,{
-	  \ 'priority': l:priority,
-	  \ 'filename': bufname(l:item.bufnr),
-	  \ 'lnum'    : l:item.lnum,
-	  \ 'col'     : l:item.col,
-	  \ 'text'    : l:text
-    })
+  call add(l:parse_list, {
+          \ 'priority': l:priority,
+          \ 'filename': bufname(l:item.bufnr),
+          \ 'lnum'    : l:item.lnum,
+          \ 'col'     : l:item.col,
+          \ 'text'    : l:text
+          \ })
   endfor
 
   ":NOTE: Sort the list descending based on priority score
