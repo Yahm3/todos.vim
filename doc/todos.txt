@@ -1,29 +1,63 @@
-*todos.txt* todos last change: Jul 21 2026
-LEVELS - TABLE OF CONTENTS                                 *todos* *todos-toc*
+*todos.txt*     A plugin to manage TODOs in a vim friendly way     *todos*
+
+TODOS - TABLE OF CONTENTS                                      *todos-toc*
 ==============================================================================
-todos
-Installation
-License
+1. Intro .................................................... |todos-intro|
+2. Installation ...................................... |todos-installation|
+3. Commands .............................................. |todos-commands|
+4. Mappings .............................................. |todos-mappings|
+5. License ................................................ |todos-license|
 
-LEVELS.VI                                                          *todos.vim*
+
+INTRO                                                          *todos-intro*
 ==============================================================================
-I use todos to manage my TODOs in vim effeciently
+I use todos to manage my TODOs in vim efficiently.
 
 
-INSTALLATION                                             *todos-installation*
+INSTALLATION                                            *todos-installation*
 ==============================================================================
 Use your favorite plugin manager.
 
- - {vim-plug}{1}
-   1. Add `Plug 'Yahm3/todos.vim'` to .vimrc
-   2. Run `:PlugInstall`
-                                      {1} https://github.com/junegunn/vim-plug
+  - {vim-plug}
+    1. Add `Plug 'Yahm3/todos.vim'` to your .vimrc
+    2. Run `:PlugInstall`
 
-LICENSE                                                       *todos-license*
+
+COMMANDS                                                    *todos-commands*
 ==============================================================================
+:Time [args]
+    The 'Time' command is used to view the month, day, and time.
+    e.g: Jul 21 17:29
+    
+    Optional arguments:
+    d           display day of the month
+    t           display current time
 
+:TdGen                                                             *:TdGen*
+    Calls `todos#Todo()` to generate or create a new TODO.
+
+:TdOpen                                                           *:TdOpen*
+    Calls `todos#Open()` to open the TODOs list.
+
+
+MAPPINGS                                                    *todos-mappings*
+==============================================================================
+By default, todos provides the following normal mode mappings:
+
+<leader>td      Generates a new TODO (maps to <Plug>(TodosTodo))
+<leader>tdo     Opens the TODO list (maps to <Plug>(TodosOpen))
+
+To disable these default mappings, add the following to your .vimrc: >
+    let g:todos_disable_mappings = 1
+<
+When inside a `todos.txt` buffer, the plugin also automatically maps:
+
+<CR>            Calls `todos#GoTo()` to jump to the selected item.
+
+
+LICENSE                                                      *todos-license*
+==============================================================================
 GNU GPL v3
 
 ==============================================================================
 vim:tw=78:sw=2:ts=2:ft=help:norl:nowrap:
-
