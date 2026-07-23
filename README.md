@@ -5,6 +5,9 @@
 
 A Vim plugin to manage your TODOs and FIXMEs efficiently without leaving your editor. 
 
+## Demo
+![todos.vim demo](./assets/demo.gif)
+
 ## Features
 * **Project-wide Scanning:** Automatically greps your working directory for `TODO` and `FIXME` comments.
 * **Priority Sorting:** Organizes tasks by priority (FIXMEs are prioritized over TODOs).
