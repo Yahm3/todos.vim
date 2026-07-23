@@ -1,5 +1,15 @@
 # todos.vim
 
+<div align="center">
+
+![GitHub Repo stars](https://img.shields.io/github/stars/Yahm3/todos.vim?style=for-the-badge&color=yellow)
+![GitHub last commit](https://img.shields.io/github/last-commit/Yahm3/todos.vim?style=for-the-badge&color=blue)
+![GitHub issues](https://img.shields.io/github/issues/Yahm3/todos.vim?style=for-the-badge&color=red)
+![GitHub License](https://img.shields.io/github/license/Yahm3/todos.vim?style=for-the-badge&color=success)
+![Vim](https://img.shields.io/badge/Vim-8.0%2B-green?style=for-the-badge&logo=vim)
+
+</div>
+
 > [!WARNING]
 > THIS PLUGIN IS A WORK IN PROGRESS! ANYTHING CAN CHANGE AT ANY MOMENT WITHOUT ANY NOTICE! USE IT AT YOUR OWN RISK!
 
