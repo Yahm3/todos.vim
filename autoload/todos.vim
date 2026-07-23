@@ -19,6 +19,8 @@ function! todos#Todo() abort
 
   silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
   let l:qflist = getqflist()
+
+
   if empty(l:qflist)
     echo "No TODOs or FIXMEs found"
     return
@@ -26,6 +28,11 @@ function! todos#Todo() abort
 
   let l:parse_list = []
   for l:item in l:qflist
+    let l:filename = bufname(l:item.bufnr)
+    if l:filename  =~# 'todos\.txt$'
+      continue
+    endif
+
     let l:text  = trim(l:item.text)
     let l:match = matchstr(l:text, '\v(FIXMEE*|TODOO*)')
 
@@ -38,7 +45,7 @@ function! todos#Todo() abort
 
   call add(l:parse_list, {
           \ 'priority': l:priority,
-          \ 'filename': bufname(l:item.bufnr),
+          \ 'filename': l:filename,
           \ 'lnum'    : l:item.lnum,
           \ 'col'     : l:item.col,
           \ 'text'    : l:text
@@ -55,6 +62,10 @@ function! todos#Todo() abort
 
   " :NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
   call writefile(l:output, l:todofile)
+  let l:bufnr = bufnr(l:todofile)
+  if l:bufnr != -1
+    execute 'checktime ' . l:bufnr
+  endif
   echo "todos.txt generated successfully!"
 endfunction
 
