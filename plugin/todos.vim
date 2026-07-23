@@ -1,6 +1,6 @@
 " Title: todos 
 " Description: A plugin to manage TODOs in a vim friendly way
-" Last Change:  Jul 21 2026
+" Last Change:  Jul 23 2026
 " Maintainer: https://github.com/Yahm3
 
 if exists("g:loaded_todos")
@@ -28,5 +28,5 @@ endif
 
 augroup TodosPlugin
   autocmd!
-  autocmd  BufRead,BufNewFile todos.txt nnoremap <buffer> <silent> <CR> :call todos#GoTo()<CR>
+  autocmd  Filetype todos nnoremap <buffer> <silent> <CR> :call todos#GoTo()<CR>
 augroup END
