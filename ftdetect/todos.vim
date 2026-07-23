@@ -1,1 +1,1 @@
-autocmd BufNewFile,BufRead todos.txt setfiletype todos
+autocmd BufNewFile,BufRead todos.txt,*/todos.txt set filetype=todos

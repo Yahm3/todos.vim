@@ -68,6 +68,7 @@ function! todos#Open()
     call writefile([],l:todofile)
   endif
   execute 'edit ' . fnameescape(l:todofile)
+  setlocal filetype=todos
 endfunction
 
 function! todos#GoTo() abort
