@@ -10,7 +10,6 @@ people like you that make todos.vim such a great tool.
 - [Development Setup](#development-setup)
 - [Pull Request Process](#pull-request-process)
 - [Style Guide](#style-guide)
-- [Community](#community)
 
 ## Code of Conduct
 
