@@ -82,10 +82,19 @@ function! todos#Open()
   setlocal filetype=todos
 endfunction
 
+function! CheckBufExists(filename, lnum, col)
+  if buflisted(a:filename)
+    execute 'drop ' . fnameescape(a:filename)
+  else
+    execute 'tabedit ' . fnameescape(a:filename)
+  endif
+    call cursor(str2nr(a:lnum), str2nr(a:col))
+endfunction
+
 function! todos#GoTo() abort
   let l:line = getline('.')
-
   let l:parts = split(l:line, ' | ')
+
   if len(l:parts) >= 2
     let l:filename = l:parts[0]
     let l:pos = split(l:parts[1], ':')
@@ -93,9 +102,7 @@ function! todos#GoTo() abort
     if len(l:pos) == 2
       let l:lnum = l:pos[0]
       let l:col = l:pos[1]
-
-      execute 'tabedit ' . fnameescape(l:filename)
-      call cursor(str2nr(l:lnum), str2nr(l:col))
+      call CheckBufExists(l:filename, l:lnum, l:col)
     endif
   else
     echo "Line could not be parsed"
