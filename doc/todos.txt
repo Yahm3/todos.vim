@@ -1,3 +1,8 @@
+" Title: todos 
+" Description: A plugin to manage TODOs in a vim friendly way
+" Last Change:  Aug 11 2026
+" Maintainer: https://github.com/Yahm3
+
 *todos.txt*     A plugin to manage TODOs in a vim friendly way     *todos*
 
 TODOS - TABLE OF CONTENTS                                      *todos-toc*
@@ -44,8 +49,15 @@ MAPPINGS                                                    *todos-mappings*
 ==============================================================================
 By default, todos provides the following normal mode mappings:
 
-<leader>td      Generates a new TODO (maps to <Plug>(TodosTodo))
-<leader>tdo     Opens the TODO list (maps to <Plug>(TodosOpen))
+<leader>td      Generates a new TODO.               *todos-<leader>td*
+                (maps to <Plug>(TodosTodo))
+
+<leader>tdo     Opens the TODO list.                *todos-<leader>tdo*
+                (maps to <Plug>(TodosOpen))
+
+<leader>tdi     Appends 'todos.txt' to .gitignore, creating   *todos-<leader>tdi*
+                the file if it doesn't exist.
+                (maps to <Plug>(TodosIgnore))
 
 To disable these default mappings, add the following to your .vimrc: >
     let g:todos_disable_mappings = 1
