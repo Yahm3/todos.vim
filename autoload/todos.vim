@@ -1,3 +1,8 @@
+" Title: todos 
+" Description: A plugin to manage TODOs in a vim friendly way
+" Last Change:  Aug 11 2026
+" Maintainer: https://github.com/Yahm3
+
 function! todos#Time(...)
   if !exists("*strftime")
     return
@@ -14,12 +19,56 @@ function! todos#Time(...)
   endif
 endfunction
 
+function! todos#ignore() abort
+  let l:ignoreFile = getcwd() . "/.gitignore"
+  let l:todosFile = "todos.txt"
+
+  if filereadable(l:ignoreFile)
+    let l:lines = readfile(l:ignoreFile)
+    
+    if index(l:lines, l:todosFile) == -1
+      call inputsave()
+      let l:writeChoice = input('Add todos.txt to .gitignore? (Y/N): ')
+      call inputrestore()
+      
+      echo "\n" 
+
+      if l:writeChoice =~? '^y$'
+        if writefile([l:todosFile], l:ignoreFile, "a") == 0
+          echo "todos.txt appended to .gitignore successfully!"
+        else
+          echo "Error: Failed to modify .gitignore file."
+        endif
+      else
+        echo "Input cancelled."
+      endif
+    else
+      echo "todos.txt is already in your .gitignore"
+    endif
+
+  else
+    call inputsave()
+    let l:createChoice = input('Create .gitignore file and add todos.txt? (Y/N): ')
+    call inputrestore()
+    echo "\n"
+
+    if l:createChoice =~? '^y$'
+      if writefile([l:todosFile], l:ignoreFile) == 0
+        echo ".gitignore file with todos.txt generated successfully!"
+      else
+        echo "Error: Failed to write to file."
+      endif
+    else
+      echo "Input cancelled."
+    endif
+  endif
+endfunction
+
 function! todos#Todo() abort
   let l:todofile = getcwd() . "/todos.txt"
 
   silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
   let l:qflist = getqflist()
-
 
   if empty(l:qflist)
     echo "No TODOs or FIXMEs found"
@@ -60,7 +109,7 @@ function! todos#Todo() abort
     call add(l:output, l:line)
   endfor
 
-  " :NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
+  ":NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
   call writefile(l:output, l:todofile)
   let l:bufnr = bufnr(l:todofile)
   if l:bufnr != -1

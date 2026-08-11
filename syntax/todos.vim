@@ -1,3 +1,8 @@
+" Title: todos 
+" Description: A plugin to manage TODOs in a vim friendly way
+" Last Change:  Aug 11 2026
+" Maintainer: https://github.com/Yahm3
+
 if exists("b:current_syntax")
   finish
 endif
