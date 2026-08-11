@@ -10,9 +10,6 @@
 
 </div>
 
-> [!WARNING]
-> THIS PLUGIN IS A WORK IN PROGRESS! ANYTHING CAN CHANGE AT ANY MOMENT WITHOUT ANY NOTICE! USE IT AT YOUR OWN RISK!
-
 A Vim plugin to manage your TODOs and FIXMEs efficiently without leaving your editor.
 
 ## Demo
@@ -70,6 +67,7 @@ Save and source(`source ~/.config/nvim/init.lua`) you `init.lua` file.
 
 - `:TdGen` — Generates (or updates) a `todos.txt` file in your current working directory containing all TODOs/FIXMEs.
 - `:TdOpen` — Opens the `todos.txt` file. If it doesn't exist, it generates it first.
+- `:TdIgnore` — Appends 'todos.txt' to .gitignore, creating the file if it doesn't exist.
 
 ## Mappings
 
@@ -77,6 +75,7 @@ By default, the plugin maps the following keys in normal mode:
 
 - `<leader>td` — Generates and updates the `todos.txt` file.
 - `<leader>tdo` — Opens the `todos.txt` file.
+- `<leader>tdi` — Appends 'todos.txt' to .gitignore, creating the file if it doesn't exist.
 
 **Inside the `todos.txt` buffer:**
 
