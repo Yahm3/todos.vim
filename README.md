@@ -67,7 +67,7 @@ Save and source(`source ~/.config/nvim/init.lua`) you `init.lua` file.
 
 - `:TdGen` — Generates (or updates) a `todos.txt` file in your current working directory containing all TODOs/FIXMEs.
 - `:TdOpen` — Opens the `todos.txt` file. If it doesn't exist, it generates it first.
-- `:TdIgnore` — Appends 'todos.txt' to .gitignore, creating the file if it doesn't exist.
+- `:TdIgnore` — Appends `todos.txt` to .gitignore, creating the file if it doesn't exist.
 
 ## Mappings
 
@@ -83,7 +83,7 @@ By default, the plugin maps the following keys in normal mode:
 
 ## Documentation
 
-For more detailed information, view the built-in help documentation inside Vim:
+For more detailed information, view the built-in help documentation inside Vim/Neovim:
 
 ```vim
 :help todos
