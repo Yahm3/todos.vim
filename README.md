@@ -75,7 +75,7 @@ By default, the plugin maps the following keys in normal mode:
 
 - `<leader>td` — Generates and updates the `todos.txt` file.
 - `<leader>tdo` — Opens the `todos.txt` file.
-- `<leader>tdi` — Appends 'todos.txt' to .gitignore, creating the file if it doesn't exist.
+- `<leader>tdi` — Appends `todos.txt` to .gitignore, creating the file if it doesn't exist.
 
 **Inside the `todos.txt` buffer:**
 
