@@ -1,6 +1,6 @@
 " Title: todos 
 " Description: A plugin to manage TODOs in a vim friendly way
-" Last Change:  Aug 11 2026
+" Last Change:  Sept 27 2026
 " Maintainer: https://github.com/Yahm3
 
 function! todos#Time(...)
@@ -17,6 +17,25 @@ function! todos#Time(...)
   else
     echo strftime("%b %d %H:%M")
   endif
+endfunction
+
+function! todos#skip() abort
+  let l:confiFile = getcwd() . "/.todos.config"
+  let l:skipItemsList = []
+
+  if filereadable(l:confiFile)
+    let l:lines = readfile(l:confiFile)
+    for l:line in l:lines
+      let l:clean = trim(split(l:line, '"')[0])
+      if !empty(l:clean)
+        call add(l:skipItemsList, l:clean)
+      endif
+    endfor
+  else
+    return []
+  endif
+
+  return l:skipItemsList
 endfunction
 
 function! todos#ignore() abort
@@ -66,8 +85,23 @@ endfunction
 
 function! todos#Todo() abort
   let l:todofile = getcwd() . "/todos.txt"
+  let l:skip_list = todos#skip()
+
+  let l:save_wildignore = &wildignore
+
+  for l:ignore_item in l:skip_list
+    if l:ignore_item =~# '/$'
+      let l:dir_name = substitute(l:ignore_item, '/$','','')
+      execute 'set wildignore+=*/' . l:dir_name .'/*'
+    else
+      execute 'set wildignore+=' . l:ignore_item
+    endif
+  endfor
 
   silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
+
+  let &l:wildignore = l:save_wildignore
+
   let l:qflist = getqflist()
 
   if empty(l:qflist)
@@ -155,5 +189,28 @@ function! todos#GoTo() abort
     endif
   else
     echo "Line could not be parsed"
+  endif
+endfunction
+
+augroup TodosRefresh
+  autocmd!
+  ":NOTE: Trigger the refresh function every time a buffer is saved
+  autocmd BufWritePost * call s:AutoUpdateTodos()
+augroup END
+
+function! s:AutoUpdateTodos()
+  let l:todofile = getcwd() . "/todos.txt"
+  let l:current_file = expand('%:p')
+
+  if l:current_file ==# l:todofile
+    return
+  endif
+
+  if filereadable(l:todofile)
+    call todos#Todo()
+    let l:bufnr = bufnr(l:todofile)
+    if l:bufnr != -1
+      silent! execute 'checktime ' . l:bufnr
+    endif
   endif
 endfunction
