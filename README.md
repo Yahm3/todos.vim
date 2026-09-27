@@ -22,6 +22,7 @@ A Vim plugin to manage your TODOs and FIXMEs efficiently without leaving your ed
 - **Priority Sorting:** Organizes tasks by priority (FIXMEs are prioritized over TODOs).
 - **Native Navigation:** Press `<Enter>` on any task in the list to immediately jump to that file and line.
 - **Custom Syntax Highlighting:** The `todos.txt` file is automatically color-coded for readability.
+- **Smart Ignore:** Respects your `.todos.config` file to skip heavy directories (like `node_modules`).
 
 ## Installation
 
@@ -58,6 +59,17 @@ return {
 ```
 
 Save and source(`source ~/.config/nvim/init.lua`) you `init.lua` file.
+
+## Configuration
+To prevent the plugin from scanning heavy or irrelevant directories (like dependencies or build folders), create a `.todos.config` file in the root of your project directory.
+
+List the directories you want to ignore on separate lines. *You can also use inline comments*:
+
+```
+node_modules/ "Ignores the entire folder
+build/ " Ignores the compiled build folder
+.env "Ignores the environment file
+```
 
 ## Commands
 
