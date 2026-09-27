@@ -26,9 +26,12 @@ function! todos#skip() abort
   if filereadable(l:confiFile)
     let l:lines = readfile(l:confiFile)
     for l:line in l:lines
-      let l:clean = trim(split(l:line, '"')[0])
-      if !empty(l:clean)
-        call add(l:skipItemsList, l:clean)
+      let l:parts = split(l:line, '"')
+      if !empty(l:parts)
+	let l:clean = trim(l:parts[0])
+	if !empty(l:clean)
+	  call add(l:skipItemsList, l:clean)
+	endif
       endif
     endfor
   else
