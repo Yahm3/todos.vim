@@ -1,6 +1,6 @@
 " Title: todos 
 " Description: A plugin to manage TODOs in a vim friendly way
-" Last Change:  Aug 11 2026
+" Last Change:  Sep 27 2026
 " Maintainer: https://github.com/Yahm3
 
 *todos.txt*     A plugin to manage TODOs in a vim friendly way     *todos*
@@ -9,9 +9,10 @@ TODOS - TABLE OF CONTENTS                                      *todos-toc*
 ==============================================================================
 1. Intro .................................................... |todos-intro|
 2. Installation ...................................... |todos-installation|
-3. Commands .............................................. |todos-commands|
-4. Mappings .............................................. |todos-mappings|
-5. License ................................................ |todos-license|
+3. Configuration .................................... |todos-configuration|
+4. Commands .............................................. |todos-commands|
+5. Mappings .............................................. |todos-mappings|
+6. License ................................................ |todos-license|
 
 
 INTRO                                                          *todos-intro*
@@ -27,6 +28,16 @@ Use your favorite plugin manager.
     1. Add `Plug 'Yahm3/todos.vim'` to your .vimrc
     2. Run `:PlugInstall`
 
+CONFIGURATION                                             *todos-configuration*
+==============================================================================
+You can prevent the plugin from scanning large directories (such as dependency
+folders) by creating a `.todos.config` file in your project root.
+
+Add one directory per line. Inline comments using `"` are supported: >
+
+    node_modules/
+    .env    " This ignores the .env file
+    build/
 
 COMMANDS                                                    *todos-commands*
 ==============================================================================
