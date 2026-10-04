@@ -19,26 +19,30 @@ function! todos#Time(...)
   endif
 endfunction
 
+let l:cached_skip_list = []
+let l:config_read = []
+
 function! todos#skip() abort
+  if s:config_read
+    return s:cached_skip_list
+  endif
+
+  let s:config_read = 1
+
   let l:confiFile = getcwd() . "/.todos.config"
-  let l:skipItemsList = []
+  let s:cached_skip_list = []
 
   if filereadable(l:confiFile)
     let l:lines = readfile(l:confiFile)
     for l:line in l:lines
-      let l:parts = split(l:line, '"')
-      if !empty(l:parts)
-	let l:clean = trim(l:parts[0])
-	if !empty(l:clean)
-	  call add(l:skipItemsList, l:clean)
-	endif
+      let l:clean = trim(split(l:line, '"')[0])
+      if !empty(l:clean)
+	call add(s:cached_skip_list, l:clean)
       endif
     endfor
-  else
-    return []
   endif
 
-  return l:skipItemsList
+  return s:cached_skip_list
 endfunction
 
 function! todos#ignore() abort
@@ -92,18 +96,21 @@ function! todos#Todo() abort
 
   let l:save_wildignore = &wildignore
 
-  for l:ignore_item in l:skip_list
-    if l:ignore_item =~# '/$'
-      let l:dir_name = substitute(l:ignore_item, '/$','','')
-      execute 'set wildignore+=*/' . l:dir_name .'/*'
-    else
-      execute 'set wildignore+=' . l:ignore_item
-    endif
-  endfor
+  try
+    for l:ignore_item in l:skip_list
+      if l:ignore_item =~# '/$'
+	let l:dir_name = substitute(l:ignore_item, '/$','','')
+	execute 'set wildignore+=*/' . l:dir_name .'/*'
+      else
+	execute 'set wildignore+=' . l:ignore_item
+      endif
+    endfor
 
-  silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
+    silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
 
-  let &l:wildignore = l:save_wildignore
+  finally
+    let &l:wildignore = l:save_wildignore
+  endtry
 
   let l:qflist = getqflist()
 
