@@ -19,8 +19,8 @@ function! todos#Time(...)
   endif
 endfunction
 
-let l:cached_skip_list = []
-let l:config_read = []
+let s:cached_skip_list = []
+let s:config_read = []
 
 function! todos#skip() abort
   if s:config_read
