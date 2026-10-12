@@ -20,7 +20,7 @@ function! todos#Time(...)
 endfunction
 
 let s:cached_skip_list = []
-let s:config_read = []
+let s:config_read = 0
 
 function! todos#skip() abort
   if s:config_read
