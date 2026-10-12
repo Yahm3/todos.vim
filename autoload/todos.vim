@@ -182,7 +182,6 @@ function! todos#Todo() abort
   if l:bufnr != -1
     execute 'checktime ' . l:bufnr
   endif
-  echo "todos.txt generated successfully!"
 endfunction
 
 function! todos#Open()
