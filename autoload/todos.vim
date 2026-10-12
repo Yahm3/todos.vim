@@ -1,6 +1,6 @@
 " Title: todos 
 " Description: A plugin to manage TODOs in a vim friendly way
-" Last Change:  Sept 27 2026
+" Last Change:  Oct 12 2026
 " Maintainer: https://github.com/Yahm3
 
 function! todos#Time(...)
@@ -22,25 +22,40 @@ endfunction
 let s:cached_skip_list = []
 let s:config_read = 0
 
+
 function! todos#skip() abort
   if s:config_read
     return s:cached_skip_list
   endif
 
   let s:config_read = 1
-
-  let l:confiFile = getcwd() . "/.todos.config"
   let s:cached_skip_list = []
 
+  let l:confiFile = getcwd() . "/.todos.config"
   if filereadable(l:confiFile)
     let l:lines = readfile(l:confiFile)
     for l:line in l:lines
       let l:clean = trim(split(l:line, '"')[0])
       if !empty(l:clean)
-	call add(s:cached_skip_list, l:clean)
+        call add(s:cached_skip_list, l:clean)
       endif
     endfor
   endif
+
+  let l:gitignoreFile = getcwd() . "/.gitignore"
+  if filereadable(l:gitignoreFile)
+    let l:lines = readfile(l:gitignoreFile)
+    for l:line in l:lines
+      let l:clean = trim(l:line)
+      " Skip empty lines and comments
+      if !empty(l:clean) && l:clean !~# '^#'
+        let l:clean = substitute(l:clean, '^/', '', '')
+        call add(s:cached_skip_list, l:clean)
+      endif
+    endfor
+  endif
+
+  call uniq(sort(s:cached_skip_list))
 
   return s:cached_skip_list
 endfunction
@@ -94,23 +109,31 @@ function! todos#Todo() abort
   let l:todofile = getcwd() . "/todos.txt"
   let l:skip_list = todos#skip()
 
-  let l:save_wildignore = &wildignore
-
-  try
+  if executable('rg')
+    silent! let l:rg_cmd = 'rg --vimgrep "(TODOO*|FIXMEE*)"'
     for l:ignore_item in l:skip_list
-      if l:ignore_item =~# '/$'
-	let l:dir_name = substitute(l:ignore_item, '/$','','')
-	execute 'set wildignore+=*/' . l:dir_name .'/*'
-      else
-	execute 'set wildignore+=' . l:ignore_item
-      endif
+      let l:rg_cmd .= ' --iglob "!' . l:ignore_item . '"'
     endfor
 
-    silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
+    silent! execute 'cexpr system(' . string(l:rg_cmd) . ')'
+  else
+    let l:save_wildignore = &wildignore
+    try
+      for l:ignore_item in l:skip_list
+	if l:ignore_item =~# '/$'
+	  let l:dir_name = substitute(l:ignore_item, '/$','','')
+	  execute 'set wildignore+=*/' . l:dir_name .'/*'
+	else
+	  execute 'set wildignore+=' . l:ignore_item
+	endif
+      endfor
 
-  finally
-    let &l:wildignore = l:save_wildignore
-  endtry
+      silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
+
+    finally
+      let &wildignore = l:save_wildignore
+    endtry
+  endif
 
   let l:qflist = getqflist()
 
