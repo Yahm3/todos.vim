@@ -152,6 +152,7 @@ function! todos#Todo(...) abort
 
       if l:open_qf
         call add(l:qf_items, {
+              \ 'priority': l:priority,
               \ 'filename': l:filename,
               \ 'lnum'    : l:lnum,
               \ 'col'     : l:col,
