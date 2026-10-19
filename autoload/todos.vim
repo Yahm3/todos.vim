@@ -1,6 +1,6 @@
 " Title: todos 
 " Description: A plugin to manage TODOs in a vim friendly way
-" Last Change:  Oct 12 2026
+" Last Change:  Oct 19 2026
 " Maintainer: https://github.com/Yahm3
 
 function! todos#Time(...)
@@ -105,82 +105,131 @@ function! todos#ignore() abort
   endif
 endfunction
 
-function! todos#Todo() abort
+function! todos#Todo(...) abort
+  let l:open_qf = a:0 > 0 ? a:1 : 0
   let l:todofile = getcwd() . "/todos.txt"
   let l:skip_list = todos#skip()
+  let l:parse_list = []
+  let l:qf_items = []
 
   if executable('rg')
-    silent! let l:rg_cmd = 'rg --vimgrep "(TODOO*|FIXMEE*)"'
+    let l:rg_cmd = 'rg --vimgrep --no-heading "(TODOO*|FIXMEE*)"'
     for l:ignore_item in l:skip_list
       let l:rg_cmd .= ' --iglob "!' . l:ignore_item . '"'
     endfor
 
-    silent! execute 'cexpr system(' . string(l:rg_cmd) . ')'
+    let l:raw_output = system(l:rg_cmd)
+    if v:shell_error != 0 || empty(l:raw_output)
+      return
+    endif
+
+    for l:line in split(l:raw_output, "\n")
+      let l:parts = split(l:line, ':')
+      if len(l:parts) < 4 | continue | endif
+
+      let l:filename = l:parts[0]
+      if l:filename =~# 'todos\.txt$' | continue | endif
+
+      let l:lnum = str2nr(l:parts[1])
+      let l:col = str2nr(l:parts[2])
+      let l:text = trim(join(l:parts[3:], ':'))
+
+      let l:match = matchstr(l:text, '\v(FIXMEE*|TODOO*)')
+      let l:priority = 0
+      if l:match =~# '^FIXME'
+        let l:priority = 1000 + len(l:match)
+      elseif l:match =~# '^TODO'
+        let l:priority = 500 + len(l:match)
+      endif
+
+      call add(l:parse_list, {
+            \ 'priority': l:priority,
+            \ 'filename': l:filename,
+            \ 'lnum'    : l:lnum,
+            \ 'col'     : l:col,
+            \ 'text'    : l:text
+            \ })
+
+      if l:open_qf
+        call add(l:qf_items, {
+              \ 'filename': l:filename,
+              \ 'lnum'    : l:lnum,
+              \ 'col'     : l:col,
+              \ 'text'    : l:text
+              \ })
+      endif
+    endfor
+
   else
     let l:save_wildignore = &wildignore
+    let l:old_qflist = getqflist()
     try
       for l:ignore_item in l:skip_list
-	if l:ignore_item =~# '/$'
-	  let l:dir_name = substitute(l:ignore_item, '/$','','')
-	  execute 'set wildignore+=*/' . l:dir_name .'/*'
-	else
-	  execute 'set wildignore+=' . l:ignore_item
-	endif
+        if l:ignore_item =~# '/$'
+          let l:dir_name = substitute(l:ignore_item, '/$','','')
+          execute 'set wildignore+=*/' . l:dir_name .'/*'
+        else
+          execute 'set wildignore+=' . l:ignore_item
+        endif
       endfor
 
       silent! noautocmd vimgrep /\v(TODOO*|FIXMEE*)/j **/*
+      let l:qflist = getqflist()
+      
+      for l:item in l:qflist
+        let l:filename = bufname(l:item.bufnr)
+        if l:filename  =~# 'todos\.txt$' | continue | endif
 
+        let l:text  = trim(l:item.text)
+        let l:match = matchstr(l:text, '\v(FIXMEE*|TODOO*)')
+
+        let l:priority = 0
+        if l:match =~# '^FIXME'
+          let l:priority = 1000 + len(l:match)
+        elseif l:match =~# '^TODO'
+          let l:priority = 500 + len(l:match)
+        endif
+
+        call add(l:parse_list, {
+              \ 'priority': l:priority,
+              \ 'filename': l:filename,
+              \ 'lnum'    : l:item.lnum,
+              \ 'col'     : l:item.col,
+              \ 'text'    : l:text
+              \ })
+      endfor
+
+      if l:open_qf
+        let l:qf_items = filter(copy(l:parse_list), 'v:val.filename !~# "todos\\.txt$"')
+      endif
     finally
       let &wildignore = l:save_wildignore
+      call setqflist(l:old_qflist, 'r')
     endtry
   endif
 
-  let l:qflist = getqflist()
-
-  if empty(l:qflist)
-    echo "No TODOs or FIXMEs found"
+  if empty(l:parse_list)
     return
   endif
 
-  let l:parse_list = []
-  for l:item in l:qflist
-    let l:filename = bufname(l:item.bufnr)
-    if l:filename  =~# 'todos\.txt$'
-      continue
-    endif
-
-    let l:text  = trim(l:item.text)
-    let l:match = matchstr(l:text, '\v(FIXMEE*|TODOO*)')
-
-    let l:priority = 0
-    if l:match =~# '^FIXME'
-      let l:priority = 1000 + len(l:match)
-    elseif l:match =~# '^TODO'
-      let l:priority = 500 + len(l:match)
-    endif
-
-  call add(l:parse_list, {
-          \ 'priority': l:priority,
-          \ 'filename': l:filename,
-          \ 'lnum'    : l:item.lnum,
-          \ 'col'     : l:item.col,
-          \ 'text'    : l:text
-          \ })
-  endfor
-
-  ":NOTE: Sort the list descending based on priority score
   call sort(l:parse_list, {a, b -> b.priority - a.priority})
   let l:output = []
   for l:item in l:parse_list
-    let l:line = printf("%s | %d:%d | %s", l:item.filename, l:item.lnum, l:item.col, l:item.text) 
+    let l:line = printf("%s | %d:%d | %s", l:item.filename, l:item.lnum, l:item.col, l:item.text)
     call add(l:output, l:line)
   endfor
 
-  ":NOTE: Write to the file (overwrites if it exists, creates if it doesn't)
-  call writefile(l:output, l:todofile)
+  noautocmd call writefile(l:output, l:todofile)
+
   let l:bufnr = bufnr(l:todofile)
-  if l:bufnr != -1
-    execute 'checktime ' . l:bufnr
+  if l:bufnr != -1 && bufloaded(l:bufnr)
+    noautocmd execute 'silent! checktime ' . l:bufnr
+  endif
+
+  if l:open_qf && !empty(l:qf_items)
+    call sort(l:qf_items, {a, b -> b.priority - a.priority})
+    call setqflist(l:qf_items, 'r')
+    copen
   endif
 endfunction
 
